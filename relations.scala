@@ -53,8 +53,8 @@ class EndoRel[A](override val toSet: Set[(A, A)]) extends Rel[A,A](toSet):
 object EndoRel:
   def apply[A](pairs: (A, A)*): EndoRel[A] = new EndoRel(pairs.toSet)
 
-case class Poset[A](elems: Set[A], partialOrder: EndoRel[A]):
-  def toEndoRel: EndoRel[A] = ???
+case class Poset[A](a: Set[A], partialOrder: EndoRel[A]):
+  def isTotal: Boolean = ???
 
 
 extension [A, B](s: Iterable[(A, B)]) def toRel = Rel(s.toSet)
