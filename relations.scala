@@ -15,11 +15,11 @@ case class Rel[A, B](toSet: Set[(A, B)]):
 
   def image(as: Set[A]): Set[B] = toSet.collect { case (a, b) if as.contains(a) => b }
 
-  def domain: Set[A] = toSet.map((a,_) => a)
+  lazy val domain: Set[A] = toSet.map((a,_) => a)
 
-  def range: Set[B] = toSet.map((_,b) => b)
+  lazy val range: Set[B] = toSet.map((_,b) => b)
 
-  def inverse: Rel[B, A] = Rel(toSet.map((a,b) => (b, a)))
+  lazy val inverse: Rel[B, A] = Rel(toSet.map((a,b) => (b, a)))
 
   override def toString = toSet.toSeq.map((a,b) => s"$a -> $b").sorted.mkString("Rel(",", ", ")")
 
@@ -33,27 +33,27 @@ class EndoRel[A](override val toSet: Set[(A, A)]) extends Rel[A,A](toSet):
   override def toString = toSet.toSeq.map((a,b) => s"$a -> $b").sorted.mkString("EndoRel(",", ", ")")
   override def inverse: EndoRel[A] = new EndoRel(super.inverse.toSet)
 
-  def elems: Set[A] = domain ++ range
+  lazy val elems: Set[A] = domain ++ range
 
-  def elemPairs: Set[(A, A)] = (for a <- elems; b <- elems yield (a,b)).toSet
+  lazy val elemPairs: Set[(A, A)] = (for a <- elems; b <- elems yield (a,b)).toSet
 
-  def elemTriples: Set[(A, A, A)] = (for a <- elems; b <- elems; c <- elems yield (a,b,c)).toSet
+  lazy val elemTriples: Set[(A, A, A)] = (for a <- elems; b <- elems; c <- elems yield (a,b,c)).toSet
 
-  def isReflexive: Boolean = elems.forall(a => toSet.contains(a -> a))
+  lazy val isReflexive: Boolean = elems.forall(a => toSet.contains(a -> a))
 
-  def isSymmetric: Boolean = 
+  lazy val isSymmetric: Boolean = 
     elemPairs.forall((a, b) => 
       if toSet.contains(a -> b) then toSet.contains(b -> a) else true)
-      // same as: toSet.forall((a, b) => toSet.contains(b -> a))
+    // or: toSet.forall((a, b) => toSet.contains(b -> a))
 
-  def isAntiSymmetric: Boolean = ???
+  lazy val isAntiSymmetric: Boolean = ???
 
-  def isTransitive: Boolean = ???
+  lazy val isTransitive: Boolean = ???
 
 object EndoRel:
   def apply[A](pairs: (A, A)*): EndoRel[A] = new EndoRel(pairs.toSet)
 
-case class Poset[A](elems: Set[A], before: A => Option[A]):
+case class Poset[A](elems: Set[A], partialOrder: EndoRel[A]):
   def toEndoRel: EndoRel[A] = ???
 
 
